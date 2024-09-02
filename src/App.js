@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { Register, Login, Home } from "./pages/index";
 
-function App() {
+export default function App() {
+  const jwt = localStorage.getItem("jwt");
+  const logout = localStorage.getItem("logout");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (jwt && logout === "false") {
+      navigate("/home");
+    } else if (!jwt || logout === "true") {
+      navigate("/login");
+    } else {
+      navigate("/");
+    }
+  }, [jwt, logout]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      {jwt && logout === "false" ? (
+        <Route path="/home" element={<Home />} />
+      ) : (
+        <>
+          <Route path="/" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+        </>
+      )}
+    </Routes>
   );
 }
-
-export default App;
